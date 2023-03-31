@@ -14,8 +14,9 @@
 apt update
 sudo apt-get install Vagrant
 vagrant plugin install vagrant-hostmanager
+
 sudo apt-get install ansible
-ansible-galaxy collection install community.general
+ansible-galaxy collection install community.docker
 ```
 
 ### Setup VirtualBox network
@@ -28,4 +29,10 @@ sudo ./config/vbox-netowrk-setup.sh
 
 ```bash
 vagrant up --provision
+```
+
+### When vagrant stuck on SSH auth method: private key
+```bash
+eval `ssh-agent`
+kill -9 <id>
 ```

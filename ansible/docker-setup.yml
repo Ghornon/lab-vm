@@ -59,6 +59,6 @@
             ports:
                 - 80:80
             volumes:
-                - '/vagrant/config/nginx.conf:/etc/nginx/nginx.conf:ro'
+                - '/vagrant/nginx.conf:/etc/nginx/nginx.conf:ro'
         vars:
             ansible_python_interpreter: /usr/bin/python3
