@@ -1,12 +1,12 @@
----
 - name: Install and configure Nginx as a load balancer
-  hosts: lb
+  hosts: all
   become: true
   vars:
       nodes:
           - 192.168.50.101
           - 192.168.50.102
           - 192.168.50.103
+
   tasks:
       - name: Install Nginx
         yum:
