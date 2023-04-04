@@ -4,16 +4,16 @@
 
   tasks:
       - name: Add Docker CE yum repository
-        yum_repository:
+        ansible.builtin.yum_repository:
             name: docker-ce
             description: Docker CE Stable - $basearch
             baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
-            gpgcheck: yes
-            enabled: yes
+            gpgcheck: true
+            enabled: true
             gpgkey: https://download.docker.com/linux/centos/gpg
 
       - name: Install required packages
-        yum:
+        ansible.builtin.yum:
             name: '{{ packages }}'
             state: present
         vars:
@@ -28,13 +28,13 @@
                 - python3-pip
 
       - name: Start Docker service
-        systemd:
+        ansible.builtin.systemd:
             name: docker
             state: started
-            enabled: yes
+            enabled: true
 
       - name: Install Docker Python library
-        pip:
+        ansible.builtin.pip:
             name: '{{ packages }}'
             executable: pip3
         vars:
@@ -44,7 +44,7 @@
                 - docker-compose
 
       - name: Pull Nginx docker image
-        docker_image:
+        community.docker.docker_image:
             name: nginx:latest
             source: pull
             state: present
@@ -52,7 +52,7 @@
             ansible_python_interpreter: /usr/bin/python3
 
       - name: Run Nginx docker image
-        docker_container:
+        community.docker.docker_container:
             name: nginx_container
             image: nginx:latest
             state: started
