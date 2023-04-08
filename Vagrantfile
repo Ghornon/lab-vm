@@ -26,6 +26,15 @@ Vagrant.configure("2") do |config|
 	config.vm.define "control" do |control|
 		control.vm.network "private_network", ip: "192.168.50.10"
 		control.vm.hostname = "control"
+		control.vm.provision "ansible" do |ansible|
+			ansible.playbook = "./ansible/docker-setup.yaml"
+			ansible.groups = {
+				"control" => ["control"],
+			}
+		end
+		control.vm.provision "ansible" do |ansible|
+			ansible.playbook = "./ansible/portainer-setup.yaml"
+		end
 	end
 
 	# Proxy machine configuration
@@ -33,7 +42,10 @@ Vagrant.configure("2") do |config|
 		proxy.vm.network "private_network", ip: "192.168.50.20"
 		proxy.vm.hostname = "proxy"
 		proxy.vm.provision "ansible" do |ansible|
-			ansible.playbook = "./ansible/proxy-setup.yml"
+			ansible.playbook = "./ansible/proxy-setup.yaml"
+			ansible.groups = {
+				"proxy" => ["proxy"],
+			}
 		end
 	end
 
@@ -45,7 +57,7 @@ Vagrant.configure("2") do |config|
 			nodeconfig.hostmanager.enabled = true
 			nodeconfig.vm.synced_folder "./config", "/vagrant"
 			nodeconfig.vm.provision "ansible" do |ansible|
-				ansible.playbook = "./ansible/docker-setup.yml"
+				ansible.playbook = "./ansible/docker-setup.yaml"
 				ansible.groups = {
 					"manager" => ["node1"],
 					"workers" => ["node[1:2]"],

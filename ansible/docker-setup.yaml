@@ -26,13 +26,22 @@
                 - docker-compose-plugin
                 - python3
                 - python3-pip
+
       - name: Start Docker service
         ansible.builtin.systemd:
             name: docker
             state: started
             enabled: true
 
-      - name: Install Docker Python library
+      - name: Install and upgrade pip
+        ansible.builtin.pip:
+            name: pip
+            extra_args: --upgrade
+            executable: pip3
+        vars:
+            ansible_python_interpreter: /usr/bin/python3
+
+      - name: Install python SDK
         ansible.builtin.pip:
             name: '{{ packages }}'
             executable: pip3
@@ -41,21 +50,6 @@
             packages:
                 - docker
                 - docker-compose
-      - name: Pull Nginx docker image
-        community.docker.docker_image:
-            name: nginx:latest
-            source: pull
-            state: present
-        vars:
-            ansible_python_interpreter: /usr/bin/python3
-      - name: Run Nginx docker image
-        community.docker.docker_container:
-            name: nginx_container
-            image: 'nginx:latest'
-            state: started
-            ports:
-                - '80:80'
-            volumes:
-                - '/vagrant/nginx.conf:/etc/nginx/nginx.conf:ro'
-        vars:
-            ansible_python_interpreter: /usr/bin/python3
+
+      - name: Add user permissions
+        ansible.builtin.shell: 'usermod -aG docker vagrant'
