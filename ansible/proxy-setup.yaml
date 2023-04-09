@@ -1,6 +1,6 @@
 ---
 - name: Install and configure Nginx as a load balancer
-  hosts: all
+  hosts: proxy
   become: true
   vars:
       nodes:
@@ -12,6 +12,7 @@
         ansible.builtin.yum:
             name: nginx
             state: present
+
       - name: Configure Nginx
         ansible.builtin.template:
             src: ../config/nginx.conf.j2
@@ -35,4 +36,4 @@
       - name: Restart nginx
         ansible.builtin.service:
             name: nginx
-            state: restarted
+            state: started

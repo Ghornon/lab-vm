@@ -1,0 +1,50 @@
+---
+- name: Create Docker Swarm
+  hosts: manager
+  become: true
+  vars:
+      swarm_listen_address: '{{ ansible_host }}'
+
+  tasks:
+      - name: Initialize Swarm on Manager node
+        community.docker.docker_swarm:
+            state: present
+            advertise_addr: 'eth1'
+            listen_addr: 'eth1:2377'
+        register: result
+        vars:
+            ansible_python_interpreter: /usr/bin/python3
+
+  handlers:
+      - name: Restart Docker
+        ansible.builtin.service:
+            name: docker
+            state: restarted
+
+- name: Join Nodes to Docker Swarm
+  hosts: workers
+  become: true
+  vars:
+      swarm_listen_address: '{{ ansible_host }}'
+      swarm_token: "{{ hostvars['node1']['result']['swarm_facts']['JoinTokens']['Worker'] }}"
+
+  tasks:
+      - name: Print join token
+        debug:
+            var: '{{ ansible_default_ipv4.address }}'
+
+      - name: Join node to Swarm
+        community.docker.docker_swarm:
+            state: join
+            join_token: '{{ swarm_token }}'
+            advertise_addr: '{{ ansible_host }}'
+            listen_addr: '{{ ansible_host }}:2377'
+            remote_addrs: '{{ swarm_listen_address }}:2377'
+        vars:
+            ansible_python_interpreter: /usr/bin/python3
+
+  handlers:
+      - name: Restart Docker
+        ansible.builtin.service:
+            name: docker
+            state: restarted

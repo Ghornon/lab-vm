@@ -58,10 +58,14 @@ Vagrant.configure("2") do |config|
 			nodeconfig.vm.synced_folder "./config", "/vagrant"
 			nodeconfig.vm.provision "ansible" do |ansible|
 				ansible.playbook = "./ansible/docker-setup.yaml"
+			end
+
+			nodeconfig.vm.provision "ansible" do |ansible|
 				ansible.groups = {
 					"manager" => ["node1"],
-					"workers" => ["node[1:2]"],
+					"workers" => ["node[2:3]"],
 				}
+				ansible.playbook = "./ansible/swarm-setup.yaml"
 			end
 		end
 	end

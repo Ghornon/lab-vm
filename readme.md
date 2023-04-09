@@ -19,7 +19,7 @@ The DevOps Lab project can be used as a starting point for creating a developmen
 ### Dev Dependencies
 
 1. ansible-lint
-2. python dev
+2. python3
 
 ## Setup
 
@@ -53,4 +53,10 @@ vagrant up --provision
 ```bash
 eval `ssh-agent`
 kill -9 <id>
+```
+
+## Run swarm setup
+
+```bash
+ansible-playbook ./ansible/swarm-setup.yaml -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory
 ```
